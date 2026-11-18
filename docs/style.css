@@ -46,10 +46,10 @@ footer { border-top: 1px solid var(--line); margin-top: 48px; padding: 16px 0 30
   .detail { margin-top: 30px; padding-top: 28px; }
 }
 @media (min-width: 1000px) {
-  .hero { padding-top: 44px; }
-  .hero h1 { font-size: clamp(4rem, 5.5vw, 5.25rem); }
-  .hero .lede { margin: 14px 0 20px; }
-  .hero figure { max-width: 940px; }
+  .hero { padding-top: 36px; }
+  .hero h1 { font-size: clamp(3.65rem, 4.5vw, 4.5rem); }
+  .hero .lede { max-width: 76ch; margin: 14px 0 20px; }
+  .hero figure { max-width: 900px; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .hero h1 { animation: enter .3s ease-out both; }
