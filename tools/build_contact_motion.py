@@ -7,6 +7,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 
 from build_boulder_motion import blend, build, fk
+from boulder_outcome import settle_frame
 from contact_probe import DURATION, EVENT, LEVELS, probe_conditions
 from contact_recovery import matching_phase, recovery_start, transition_path, transition_weight
 
@@ -41,12 +42,14 @@ def snapshots(cases):
             for k in ("pose","rot")}
 
 
-def add_recovery(row, case, baseline, payload, manny, parents):
+def add_recovery(row, case, baseline, payload, manny, parents, required=True):
     heights = np.asarray([f["pose"][0][2] for f in case["frames"]])
     feet = np.asarray([f["feet"] for f in case["frames"]])
     first = recovery_start(heights,feet)
     if first is None or first+34 >= len(heights):
-        raise ValueError("A standing recovery did not leave enough footage for the handoff.")
+        if required:
+            raise ValueError("A standing recovery did not leave enough footage for the handoff.")
+        return
     last = first+32
     event = row["event"]
     raw = np.asarray(row["keys"])
@@ -123,6 +126,16 @@ def make_take(dataset, cases, manny, force, recovery=False):
         branch["actual_points_m"] = [case["frames"][f]["point"] for f in range(EVENT,EVENT+DURATION)]
         if recovery and case["outcome"] == "stood":
             add_recovery(row,case,cases[0],payload,manny,parents)
+        if recovery and case["outcome"] == "fell":
+            positions = np.asarray([f["pose"] for f in case["frames"]])
+            velocities = np.linalg.norm(np.diff(positions,axis=0,prepend=positions[:1]),axis=-1).mean(1)
+            motion = np.convolve(velocities,np.ones(5)/5,mode="same")
+            hold = settle_frame(positions[:,0,2],motion,EVENT+12)
+            key = hold-branch["start"]
+            row["keys"][key:] = [row["keys"][key]]*(len(row["keys"])-key)
+            row["location"][hold:] = [row["location"][hold]]*(len(row["location"])-hold)
+            branch["hold"] = hold
+            branch["terminal"] = True
     return payload
 
 

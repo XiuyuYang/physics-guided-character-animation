@@ -32,7 +32,7 @@
       "first": 60,
       "last": 63,
       "start": 58,
-      "hold": null,
+      "hold": 129,
       "resume": null,
       "actual_points_m": [
         [
@@ -55,7 +55,8 @@
           0.15013613741318194,
           1.243448399878668
         ]
-      ]
+      ],
+      "terminal": true
     },
     {
       "actor": 3,

@@ -1,5 +1,6 @@
 """Author two native four-lane body-contact comparison maps."""
 import json
+from math import sqrt
 import runpy
 from pathlib import Path
 
@@ -21,11 +22,12 @@ def label(text, position):
     return actor
 
 
-def take(data, camera_data):
+def take(data, camera_data, prop=None):
     force = data["force"]
     root = "/Game/BoulderDemo"
-    variant = "Recovery" if data.get("recovery") else "Contact"
-    level = f"{root}/L_{variant}_{force}"
+    variant = prop or ("Recovery" if data.get("recovery") else "Contact")
+    suffix = variant if prop else f"{variant}_{force}"
+    level = f"{root}/L_{suffix}"
     n = data["frames"]
     if LIB.does_asset_exist(level):
         assert LEVELS.load_level(level)
@@ -34,7 +36,7 @@ def take(data, camera_data):
                 ACTORS.destroy_actor(actor)
     else:
         assert LEVELS.new_level(level)
-    sequence = asset(f"LS_{variant}_{force}",ue.LevelSequence,ue.LevelSequenceFactoryNew())
+    sequence = asset(f"LS_{suffix}",ue.LevelSequence,ue.LevelSequenceFactoryNew())
     for binding in sequence.get_bindings():
         binding.remove()
     for track in sequence.get_tracks():
@@ -52,6 +54,8 @@ def take(data, camera_data):
     stage = material("M_Probe_Floor",(.045,.07,.105))
     strips = material("M_Probe_Tracks",(.085,.21,.28))
     pulse = material("M_Probe_Pulse",(.025,.68,1.0),emissive=True)
+    dart = material("M_Impact_Dart",(1.,.42,.09),emissive=True) if prop == "Dart" else None
+    cone = ue.load_asset("/Engine/BasicShapes/Cone") if dart else None
     shape("Contact stage",cube,stage,(930,0,-22),(65,30,.44))
     for i in range(5):
         shape("Synchronized lane divider",cube,strips,(870,(i-2)*225,1),(40,.032,.024))
@@ -77,7 +81,9 @@ def take(data, camera_data):
         track = binding.add_track(ue.MovieSceneSkeletalAnimationTrack)
         if row["keys"]:
             start = event["start"]
-            prefix = "Recovery" if variant == "Recovery" else "Probe"
+            prefix = "Recovery" if data.get("recovery") else "Probe"
+            if prop:
+                prefix = prop
             reaction = clip(f"{prefix}_{force}_{event['body']}",mesh,data["bones"],row["keys"])
             animation(track,running,0,start)
             end = event.get("recovery_end",n)
@@ -86,7 +92,6 @@ def take(data, camera_data):
                 animation(track,running,end,n,event["resume_phase"])
             point = row["marker"][0]
             marker = shape("Contact point • "+name,sphere,pulse,point,(.09,.09,.09),movable=True)
-            vector = shape("Contact vector • "+name,cylinder,pulse,point,(.025,.025,.40),movable=True)
             points,scales = [],[]
             for i in range(n):
                 if data["event"] <= i < data["event"]+data["pulse"]:
@@ -96,9 +101,35 @@ def take(data, camera_data):
                     points.append(point)
                     scales.append((0,0,0))
             transform(sequence.add_possessable(marker),points,scales=scales)
-            vector_path = [(x,y-20,z) for x,y,z in points]
-            vector_scales = [(.025,.025,.40) if s[0] else (0,0,0) for s in scales]
-            transform(sequence.add_possessable(vector),vector_path,[ue.Rotator(roll=90)]*n,scales=vector_scales)
+            if dart:
+                bolt = shape("Stylized dart • "+name,cylinder,dart,point,(.05,.05,.48),movable=True)
+                tip = shape("Dart tip • "+name,cone,dart,point,(.12,.12,.18),movable=True)
+                path, tips, rotations, shaft_scales, tip_scales = [], [], [], [], []
+                arrival = data["event"]
+                for i in range(n):
+                    t = max(0., min(1., (i-arrival+18)/18))
+                    x,y,z = point
+                    position = (x-105*(1-t),y-355*(1-t),z+280*t*(1-t))
+                    vz = 280*(1-2*t)
+                    length = sqrt(105**2+355**2+vz**2)
+                    direction = tuple(value/length for value in (105,355,vz))
+                    path.append(tuple(a-b*30 for a,b in zip(position,direction)))
+                    tips.append(tuple(a-b*7 for a,b in zip(position,direction)))
+                    rotations.append(ue.MathLibrary.make_rot_from_z(ue.Vector(*direction)))
+                    visible = arrival-18 <= i <= arrival
+                    shaft_scales.append((.05,.05,.48) if visible else (0,0,0))
+                    tip_scales.append((.12,.12,.18) if visible else (0,0,0))
+                transform(sequence.add_possessable(bolt),path,rotations,scales=shaft_scales)
+                transform(sequence.add_possessable(tip),tips,rotations,scales=tip_scales)
+            else:
+                vector = shape("Contact vector • "+name,cylinder,pulse,point,(.025,.025,.40),movable=True)
+                vector_path = [(x,y-20,z) for x,y,z in points]
+                vector_scales = [(.023,.023,1.35) if prop and i == data["event"] else
+                                 (.025,.025,.40) if not prop and s[0] else (0,0,0)
+                                 for i,s in enumerate(scales)]
+                if prop:
+                    vector_path = [(x,y-67,z) for x,y,z in points]
+                transform(sequence.add_possessable(vector),vector_path,[ue.Rotator(roll=90)]*n,scales=vector_scales)
         else:
             animation(track,running,0,n)
         sign = label(name, (loc[0][0]+80,loc[0][1],205))
@@ -140,6 +171,8 @@ saved = Path(ue.Paths.project_saved_dir()).resolve()
 original = json.loads((saved/"contact_shots.json").read_text(encoding="utf-8"))
 recovery_mode = globals().get("RECOVERY_MODE", False)
 shots = json.loads((saved/"recovery_shots.json").read_text(encoding="utf-8")) if recovery_mode else original
-report = [take(shot, base) for shot, base in zip(shots, original)]
-name = "recovery-build.json" if recovery_mode else "contact-build.json"
+props = globals().get("PROJECTILE_STYLES", ())
+report = ([take(shots[0],original[0],prop) for prop in props] if props else
+          [take(shot,base) for shot,base in zip(shots,original)])
+name = ("prop-build.json" if props else "recovery-build.json" if recovery_mode else "contact-build.json")
 (saved/name).write_text(json.dumps(report,indent=2),encoding="utf-8")

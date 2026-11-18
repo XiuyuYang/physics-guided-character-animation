@@ -13,6 +13,7 @@ A running character can stumble, recover, or remain down. This project uses **Pe
 | [Same force, different contact points](https://xiuyuyang.github.io/physics-guided-character-animation/#title) | At 250 N the lower-leg trial keeps running, the shoulder trial gets up, and the chest trial remains down through the clip. The fourth lane is a control. |
 | [Recovery before and after](https://xiuyuyang.github.io/physics-guided-character-animation/#recovery) | The same shoulder reaction in both views. The revised version blends the final steps into a phase-matched run over 32 frames (1.07 s). |
 | [Boulder and eight runners](https://xiuyuyang.github.io/physics-guided-character-animation/#crowd) | Glancing contacts recover into running. Runners with severe impacts stay down. |
+| [Flash pulse and stylized dart](https://xiuyuyang.github.io/physics-guided-character-animation/#projectiles) | Two game effects visualize the same point-force trials and recovery. |
 
 ## Run in Unreal
 
@@ -31,6 +32,7 @@ A running character can stumble, recover, or remain down. This project uses **Pe
 | `L_Recovery_250` / `L_Recovery_700` | Matched-contact runs with the phase-aligned recovery |
 | `L_Contact_250` / `L_Contact_700` | Original PHC trials for comparison |
 | `L_BoulderCrowd` | Eight-runner crowd scene |
+| `L_Pulse` / `L_Dart` | Two visualizations of the optimized localized contacts |
 
 The setup script imports Manny from your local Epic sample and bakes the maps, animations, and trajectories from the included trial data. New physical simulations require a separate PHC / Isaac Gym setup.
 

@@ -26,7 +26,7 @@
       <dl class="lanes">
         <div><dt>小腿</dt><dd>继续跑动</dd></div>
         <div><dt>肩侧</dt><dd>跌倒、站起、继续奔跑</dd></div>
-        <div><dt>胸口</dt><dd>试次结束时仍然倒地</dd></div>
+        <div><dt>胸口</dt><dd>倒地后保持静止</dd></div>
         <div><dt>对照</dt><dd>未施加外力，继续奔跑</dd></div>
       </dl>
     </section>
@@ -41,10 +41,18 @@
     </section>
     <section class="shell detail" aria-labelledby="crowd">
       <h2 id="crowd">一个滚石，八名跑者</h2>
-      <p>群演场景采用同样的离线流程。轻擦的角色回到跑步循环，受到严重撞击的角色保持倒地。</p>
+      <p>轻擦的角色用 32 帧接回跑步循环。达到游戏终止条件的角色在倒地稳定后保持静止。</p>
       <figure>
         <video controls playsinline preload="none" width="1280" height="720" src="../media/crowd.mp4" poster="../media/crowd.jpg" aria-label="Unreal Engine 滚石与群演实拍"></video>
         <figcaption>Unreal Engine 实拍，0.71 倍速 · 播放由 Isaac Gym / PHC 仿真生成的轨迹和角色动画。</figcaption>
+      </figure>
+    </section>
+    <section class="shell detail" aria-labelledby="projectiles">
+      <h2 id="projectiles">闪光脉冲与箭形道具</h2>
+      <p>两种视觉效果共用同一组点力试次，在同一条时间轴上对比角色反应。</p>
+      <figure>
+        <div class="video-labels"><span>闪光脉冲</span><span>箭形道具</span></div>
+        <video controls playsinline preload="none" width="1280" height="360" src="../media/projectiles.mp4" poster="../media/projectiles.jpg" aria-label="闪光脉冲和箭形道具的视觉对照"></video>
       </figure>
     </section>
     <section class="shell detail" aria-labelledby="run">

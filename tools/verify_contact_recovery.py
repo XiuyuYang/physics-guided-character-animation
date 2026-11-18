@@ -28,6 +28,16 @@ def audit(saved):
         rotate = Rotation.from_euler("z",take["mesh_yaw"],degrees=True)
         for before,after,role in zip(raw["actors"],take["actors"],scene["roles"]):
             event = after["event"]
+            if event.get("terminal"):
+                hold = event["hold"]
+                key = hold-event["start"]
+                if (before["keys"][:key+1]!=after["keys"][:key+1]
+                        or before["location"][:hold+1]!=after["location"][:hold+1]
+                        or any(p!=after["keys"][key] for p in after["keys"][key:])
+                        or any(p!=after["location"][hold] for p in after["location"][hold:])
+                        or role["sections"]!=2):
+                    raise ValueError("A terminal lane did not settle into a motionless pose.")
+                continue
             if "recovery_end" not in event:
                 if (before["keys"]!=after["keys"] or before["location"]!=after["location"]
                         or role["sections"] != (1 if not before["keys"] else 2)):

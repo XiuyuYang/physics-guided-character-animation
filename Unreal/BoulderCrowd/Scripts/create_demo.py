@@ -5,7 +5,6 @@ from pathlib import Path
 import unreal as ue
 
 ROOT = "/Game/BoulderDemo"
-LEVEL = ROOT + "/L_BoulderCrowd"
 TAG = "BoulderDemoGenerated"
 ASSETS = ue.AssetToolsHelpers.get_asset_tools()
 LIB = ue.EditorAssetLibrary
@@ -142,19 +141,23 @@ def reaction_clip(name, mesh, bones, values):
     return clip
 
 
-def build():
-    data = json.loads((SAVED / "boulder_shot.json").read_text(encoding="utf-8"))
+def build(data=None):
+    if data is None:
+        data = json.loads((SAVED / "boulder_shot.json").read_text(encoding="utf-8"))
+    dense = "case" in data
+    suffix = f"Drop_{data['case'].title()}" if dense else "BoulderCrowd"
+    level = ROOT + "/L_" + suffix
     n = data["frames"]
     mesh, original = (ue.load_asset(data[name]) for name in ("mesh","run"))
     assert mesh and original
-    if LIB.does_asset_exist(LEVEL):
-        assert LEVELS.load_level(LEVEL)
+    if LIB.does_asset_exist(level):
+        assert LEVELS.load_level(level)
         for actor in ACTORS.get_all_level_actors():
             if ue.Name(TAG) in actor.tags:
                 ACTORS.destroy_actor(actor)
     else:
-        assert LEVELS.new_level(LEVEL)
-    sequence = asset("LS_BoulderCrowd", ue.LevelSequence, ue.LevelSequenceFactoryNew())
+        assert LEVELS.new_level(level)
+    sequence = asset("LS_"+suffix, ue.LevelSequence, ue.LevelSequenceFactoryNew())
     for binding in sequence.get_bindings():
         binding.remove()
     for track in sequence.get_tracks():
@@ -163,16 +166,20 @@ def build():
     sequence.set_tick_resolution(ue.FrameRate(24000, 1))
     sequence.set_playback_start(0)
     sequence.set_playback_end(n)
-    running = reaction_clip("Manny_Run_InPlace", mesh, data["bones"], data["run_keys"])
+    running = reaction_clip("Run_"+suffix if dense else "Manny_Run_InPlace",
+                            mesh,data["bones"],data["run_keys"])
 
     cube = ue.load_asset("/Engine/BasicShapes/Cube")
     ball = ue.load_asset("/Engine/BasicShapes/Sphere")
     ground = material("M_Dust", (.19,.15,.105))
     stone = material("M_Cliff", (.24,.19,.14))
     band = material("M_TrackPaint", (.72,.52,.19))
-    rock_surface = material("M_RollingStone", (.24,.21,.17), striped=True)
+    rock_surface = (material("M_Drop_Rock",(.63,.28,.075),striped=True) if dense else
+                    material("M_RollingStone",(.24,.21,.17),striped=True))
     cool = material("M_Recovery", (.06,.65,.46))
     warm = material("M_Collapse", (.81,.19,.055))
+    contact_shade = material("M_Drop_Contact",(.025,.60,1.),emissive=True) if dense else None
+    secondary_shade = material("M_Drop_Neighbor",(1.,.56,.07),emissive=True) if dense else None
     shape("Test range ground", cube, ground, (1025,0,-25), (41,35,.5))
     for edge in (-820,820):
         shape("Track boundary", cube, band, (960,edge,1), (34,.055,.025))
@@ -218,23 +225,33 @@ def build():
         if branch == "clear":
             animation(track, running, 0, n)
         else:
-            start, resume = event["start"], event["resume"]
-            clip = reaction_clip(f"A{number:02d}_PHC_{branch}", mesh, data["bones"], row["keys"])
+            start, resume = event["start"], event.get("recovery_end",event["resume"])
+            prefix = suffix+"_" if dense else ""
+            clip = reaction_clip(f"{prefix}A{number:02d}_PHC_{branch}",mesh,data["bones"],row["keys"])
             animation(track, running, 0, start)
             animation(track, clip, start, resume or n)
             if resume:
-                tail = animation(track, running, resume, n, resume % data["loop_frames"])
+                tail = animation(track,running,resume,n,event.get("resume_phase",resume % data["loop_frames"]))
                 tail_params = tail.get_editor_property("params")
                 assert tail_params.get_editor_property("start_frame_offset").value == 0
                 phase_offset = tail_params.get_editor_property("first_loop_start_frame_offset").value // 800
         # Small lane markers make the two physics outcomes easy to track in the wide shot.
-        if branch != "clear":
+        if dense and branch != "clear" and (event.get("direct_frames") or event.get("neighbor")):
+            surface = (warm if branch == "down" else
+                       contact_shade if event["direct_frames"] else secondary_shade)
+            onset = (event["hold"] if branch == "down" else min(event["direct_frames"])
+                     if event["direct_frames"] else event["neighbor"]["frame"])
+            path = [(x,y,2.5) for x,y,_ in loc]
+            marker = shape(f"A{number:02d} · contact",ball,surface,path[0],(0,0,0),movable=True)
+            scales = [(0,0,0) if i<onset else (.60,.60,.025) for i in range(n)]
+            transform(sequence.add_possessable(marker),path,scales=scales)
+        if not dense and branch != "clear":
             loc_marker = [(x,y,2.5) for x,y,_ in loc]
             marker = shape(f"A{number:02d} · result marker", ball, cool if branch == "graze" else warm,
                            loc_marker[0], (.52,.52,.021), movable=True)
             transform(sequence.add_possessable(marker), loc_marker, scale=(.52,.52,.021))
         summaries.append({"id": number, "branch": branch, "sections": len(track.get_sections()),
-                          "start": event["start"], "resume": event["resume"], "hold": event["hold"],
+                          "start": event["start"], "resume": event.get("recovery_end",event["resume"]), "hold": event["hold"],
                           "first_loop_phase": phase_offset})
 
     camera = spawn(ue.CameraActor, "Camera · running group")
@@ -250,6 +267,11 @@ def build():
         at = (x,y,80)
         back = max(0, (right-left)*1.27-1140)*drift
         eye = (x-280, y-1140-back, 580+back*.27)
+        if dense:
+            x = data["reference"][i]-min(i,90)*2.8
+            distance = 1870 if len(runners)==100 else 975
+            at = (x,55,40)
+            eye = (x-330,distance,distance*.69)
         positions.append(eye)
         angles.append(ue.MathLibrary.find_look_at_rotation(vector(eye), vector(at)))
     camera_binding = sequence.add_possessable(camera)
@@ -258,6 +280,21 @@ def build():
     cut = camera_track.add_section()
     cut.set_range(0,n)
     cut.set_camera_binding_id(sequence.get_binding_id(camera_binding))
+    if dense:
+        test = "COLLISIONS OFF" if data["case"]=="isolated" else f"{len(data['actors'])} RUNNERS"
+        title = f"{data['radius_cm']*2:.0f} cm  |  {data['mass']:.1f} kg  |  {test}"
+        sign = spawn(ue.TextRenderActor,title)
+        component = sign.get_component_by_class(ue.TextRenderComponent)
+        component.set_text(ue.Text(title))
+        component.set_world_size(8.)
+        component.set_text_render_color(ue.Color(231,242,255,255))
+        positions_text, rotations_text = [], []
+        for p,r in zip(positions,angles):
+            eye = vector(p)
+            point = eye+ue.MathLibrary.get_forward_vector(r)*400+ue.MathLibrary.get_up_vector(r)*77
+            positions_text.append((point.x,point.y,point.z))
+            rotations_text.append(ue.MathLibrary.find_look_at_rotation(point,eye))
+        transform(sequence.add_possessable(sign),positions_text,rotations_text)
 
     player = spawn(ue.LevelSequenceActor, "PLAY | Boulder crowd")
     player.set_sequence(sequence)
@@ -272,7 +309,8 @@ def build():
     player.set_editor_property("playback_settings", settings)
     LIB.save_loaded_asset(sequence)
     assert LEVELS.save_current_level()
-    (SAVED / "build-report.json").write_text(json.dumps({"level":LEVEL,"frames":n,"runners":summaries},indent=2),
+    report = f"{suffix}-build.json" if dense else "build-report.json"
+    (SAVED / report).write_text(json.dumps({"level":level,"frames":n,"runners":summaries},indent=2),
                                            encoding="utf-8")
     ue.log("BOULDER DEMO SAVED")
 

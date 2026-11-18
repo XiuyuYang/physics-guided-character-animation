@@ -9,6 +9,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 
 from boulder_outcome import DOWN_IMPULSE, outcome, settle_frame
+from contact_recovery import transition_path, transition_weight
 
 TRACKS = {"pelvis": "Pelvis", "spine_01": "Torso", "spine_02": "Spine",
           "spine_03": "Spine", "spine_04": "Chest", "spine_05": "Chest",
@@ -25,8 +26,8 @@ for side in ("l", "r"):
         ("thigh","calf"),("calf","foot"),("foot","ball"))})
 
 
-def read(folder, mode):
-    with gzip.open(folder / mode / "boulder.json.gz", "rt", encoding="utf-8") as stream:
+def read(folder, mode, case=None):
+    with gzip.open(folder / (case or mode) / "boulder.json.gz", "rt", encoding="utf-8") as stream:
         capture = json.load(stream)
     if capture["fps"] != 30 or len(capture["frames"]) != 180 or capture["mode"] != mode:
         raise ValueError("Expected a complete matched boulder capture.")
@@ -87,7 +88,7 @@ def fk(pose, parents):
     return np.asarray(world_pos), world_rot
 
 
-def build(capture, hit, clear, manny, events):
+def build(capture, hit, clear, manny, events, smooth=False):
     bones = manny["names"]
     parent = [bones.index(p) if p in bones else -1 for p in manny["parents"]]
     source = capture["names"]
@@ -139,13 +140,18 @@ def build(capture, hit, clear, manny, events):
             velocities = np.zeros(n)
             velocities[1:] = np.linalg.norm(np.diff(actual, axis=0), axis=-1).mean(1)
             motion = np.convolve(velocities, np.ones(5)/5, mode="same")
-            hold = settle_frame(center[:,2], motion, last+12)
+            limit = event.get("freeze_by",n)
+            settle_start = event.get("first_fall",last+12)
+            hold = settle_frame(center[:limit,2],motion[:limit],settle_start)
             location[hold:] = location[hold]
         if branch == "graze":
-            resume = event.get("resume_requested", last+23)
+            resume = event.get("resume_requested", last+(32 if smooth else 23))
             if resume >= n or np.min(center[resume-8:resume,2]) < .7:
                 raise ValueError("Light contact did not reach the running handoff.")
-            location[resume:] = control[resume:,0,:2] + location[resume-1] - control[resume-1,0,:2]
+            if smooth:
+                location = transition_path(location,last,resume,control_speed/30)
+            else:
+                location[resume:] = control[resume:,0,:2] + location[resume-1] - control[resume-1,0,:2]
         if branch != "clear":
             source_hit = hit["rot"][:,i] * source_basis
             source_reference = clear["rot"][:,i] * source_basis
@@ -163,6 +169,8 @@ def build(capture, hit, clear, manny, events):
                 entry_start = first-1 if branch in ("reaction","tracked") else start
                 entry = ease((frame-entry_start)/7)
                 amount = entry if resume is None else entry*ease((resume-frame)/12)
+                if smooth and resume is not None:
+                    amount = entry*(1-transition_weight(float(np.clip((frame-last)/(resume-last),0,1))))
                 world_rot = []
                 run_source = Rotation.from_quat(source_reference[sample])
                 impact_source = Rotation.from_quat(source_hit[sample])
@@ -232,7 +240,7 @@ def main():
     if np.linalg.norm(hit["pose"][:first-1]-clear["pose"][:first-1],axis=-1).max() > .05:
         raise ValueError("Crowd diverged before contact.")
     manny=json.loads(args.manny.read_text(encoding="utf-8"))
-    payload=build(capture,hit,clear,manny,events)
+    payload=build(capture,hit,clear,manny,events,smooth=True)
     args.output.write_text(json.dumps(payload,allow_nan=False,separators=(",",":")),encoding="utf-8")
     (args.batch/"contact-review.json").write_text(json.dumps({
         "fps":30,"down_impulse_proxy_threshold":DOWN_IMPULSE,"actors":events},indent=2),encoding="utf-8")
