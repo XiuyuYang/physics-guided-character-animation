@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="在 Unreal Engine 中展示基于物理模拟的奔跑、局部受力和起身接跑。">
+  <meta name="description" content="PHC 神经网络控制 100 个角色，在物理仿真中应对落石、跌倒并尝试恢复奔跑，再将计算出的骨骼动画呈现在 Unreal Engine。">
   <link rel="alternate" hreflang="en" href="../">
-  <link rel="icon" href="../media/contact.jpg">
+  <link rel="icon" href="../media/scale.jpg">
   <link rel="stylesheet" href="../style.css">
-  <title>物理引导角色动画</title>
+  <title>神经网络驱动的角色动画</title>
 </head>
 <body>
   <header><div class="shell header-row">
@@ -16,28 +16,19 @@
   </div></header>
   <main>
     <section class="hero shell" aria-labelledby="title">
-      <p class="eyebrow">PHC / Unreal Engine 5.8</p>
-      <h1 id="title">物理引导角色动画</h1>
-      <p class="lede">四个角色从同一个跑步动作起步。同样的 250 N 短时外力分别作用在小腿、肩侧和胸口，产生三种反应。第四个角色提供无外力对照。</p>
-      <figure>
-        <video controls playsinline preload="metadata" width="1280" height="720" src="../media/contact.mp4" poster="../media/contact.jpg" aria-label="Unreal Engine 局部受力对照实拍"></video>
-        <figcaption>Unreal Engine 实拍，0.71 倍速 · 250 N 持续 4 个 30 Hz 仿真步 · 青色标记提示受力位置。</figcaption>
+      <p class="eyebrow">PHC Neural Control / Unreal Engine 5.8</p>
+      <h1 id="title">神经网络驱动的角色动画</h1>
+      <p class="lede">PHC 神经网络控制 100 个角色，在物理仿真中应对落石、跌倒并尝试恢复奔跑，再将计算出的骨骼动画呈现在 Unreal Engine。</p>
+      <figure id="scale">
+        <video controls playsinline preload="metadata" width="1280" height="720" src="../media/scale.mp4" poster="../media/scale.jpg" aria-label="最终阶段 · 100 人同场 · 1 米球 · 8 秒仿真，0.8 倍速播放"></video>
+        <figcaption>最终阶段 · 100 人同场 · 1 米球 · 8 秒仿真，0.8 倍速播放</figcaption>
       </figure>
-      <dl class="lanes">
-        <div><dt>小腿</dt><dd>继续跑动</dd></div>
-        <div><dt>肩侧</dt><dd>跌倒、站起、继续奔跑</dd></div>
-        <div><dt>胸口</dt><dd>倒地后保持静止</dd></div>
-        <div><dt>对照</dt><dd>未施加外力，继续奔跑</dd></div>
-      </dl>
     </section>
-    <section class="shell detail" aria-labelledby="recovery">
-      <h2 id="recovery">起身后怎么接回跑步</h2>
-      <p>同时看两边的肩侧组。原始 PHC 片段以慢步结束。改进版按双脚支撑姿态对齐跑步相位，并在 32 帧内逐渐恢复原跑速。</p>
-      <figure>
-        <div class="video-labels"><span>原始 PHC 回放</span><span>相位对齐后的接跑</span></div>
-        <video controls playsinline preload="metadata" width="1280" height="360" src="../media/recovery.mp4" poster="../media/recovery.jpg" aria-label="原版和优化版起身接跑的同步对照"></video>
-        <figcaption>同一镜头、同一肩侧受力、同一时间轴，0.61 倍速 · 第 165 帧接回 Manny 跑步循环。</figcaption>
-      </figure>
+    <section class="shell detail" aria-labelledby="neural">
+      <h2 id="neural">神经网络如何驱动骨骼</h2>
+      <p>预训练的 PHC 神经网络每步读取角色状态与参考运动，输出关节控制动作。PD 控制器和 PhysX 共同求解身体运动、地面支撑与角色间碰撞。角色共享策略权重，各自拥有独立的仿真状态。</p>
+      <p><strong>神经网络推理 → 关节控制 → 物理仿真 → 骨骼运动重定向 → Unreal 动画</strong></p>
+      <p>Unreal 当前播放离线烘焙的神经网络与物理仿真结果。起身后的跑步相位匹配由代码完成，死亡采用场景规则，达到终止条件后保持倒地。本项目使用现有 PHC 预训练权重。</p>
     </section>
     <section class="shell detail" aria-labelledby="drops">
       <h2 id="drops">三种尺寸的落石，16 人密集队列</h2>
@@ -46,26 +37,7 @@
         <video controls playsinline preload="none" width="1280" height="720" src="../media/drops.mp4" poster="../media/drops.jpg" aria-label="Unreal Engine 中三种球体尺寸的落石实拍"></video>
         <figcaption>青色表示检测到球体直接接触，琥珀色表示推断的人物间连锁影响，橙红色表示倒地后静止的终止状态。</figcaption>
       </figure>
-      <figure>
-        <div class="video-labels"><span>开启人物间碰撞</span><span>关闭人物间碰撞</span></div>
-        <video controls playsinline preload="none" width="1280" height="360" src="../media/cascade.mp4" poster="../media/cascade.jpg" aria-label="16 人开启与关闭人物间碰撞的同步对照"></video>
-        <figcaption>两边使用同一个 1 米球和相同初始队列。左侧有四名跑者未检测到球体直接接触，却受到附近跑者的影响。</figcaption>
-      </figure>
-    </section>
-    <section class="shell detail" aria-labelledby="scale">
-      <h2 id="scale">100 人同场测试</h2>
-      <p>10 × 10 队列与 1 米球同场，由 PhysX / PHC 计算 8 秒动作。四名角色在片段内完成接跑，九名进入游戏终止状态，倒地后保持静止。</p>
-      <figure>
-        <video controls playsinline preload="none" width="1280" height="720" src="../media/scale.mp4" poster="../media/scale.jpg" aria-label="Unreal Engine 中 100 人和 1 米落石的同场测试"></video>
-      </figure>
-    </section>
-    <section class="shell detail" aria-labelledby="crowd">
-      <h2 id="crowd">一个滚石，八名跑者</h2>
-      <p>轻擦的角色用 32 帧接回跑步循环。达到游戏终止条件的角色在倒地稳定后保持静止。</p>
-      <figure>
-        <video controls playsinline preload="none" width="1280" height="720" src="../media/crowd.mp4" poster="../media/crowd.jpg" aria-label="Unreal Engine 滚石与群演实拍"></video>
-        <figcaption>Unreal Engine 实拍，0.71 倍速 · 播放由 Isaac Gym / PHC 仿真生成的轨迹和角色动画。</figcaption>
-      </figure>
+
     </section>
     <section class="shell detail" aria-labelledby="projectiles">
       <h2 id="projectiles">闪光脉冲与箭形道具</h2>
@@ -77,7 +49,7 @@
     </section>
     <section class="shell detail" aria-labelledby="run">
       <h2 id="run">打开 Unreal 工程</h2>
-      <p>先运行安装脚本，从本机 Epic Content Examples 导入 Manny，再把仓库里的试次记录烘焙成关卡和动画。用 Unreal Engine 5.8 打开 <code>BoulderCrowd.uproject</code>，在默认的 250 N 关卡点 Play。</p>
+      <p>先运行安装脚本，从本机 Epic Content Examples 导入 Manny，再把仓库里的试次记录烘焙成关卡和动画。用 Unreal Engine 5.8 打开 <code>BoulderCrowd.uproject</code>，打开 100 人关卡 <code>L_Drop_100</code> 并点 Play。</p>
       <a href="https://github.com/XiuyuYang/physics-guided-character-animation/blob/main/README.zh-CN.md">在 GitHub 查看运行方法和实验说明</a>
     </section>
   </main>
