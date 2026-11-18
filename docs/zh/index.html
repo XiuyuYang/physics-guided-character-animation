@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="在 Unreal Engine 中展示基于物理模拟的奔跑、局部受力和起身接跑。">
+  <link rel="alternate" hreflang="en" href="../">
+  <link rel="icon" href="../media/contact.jpg">
+  <link rel="stylesheet" href="../style.css">
+  <title>物理引导角色动画</title>
+</head>
+<body>
+  <header><div class="shell header-row">
+    <a class="brand" href="./">物理引导角色动画</a>
+    <nav aria-label="网站导航"><a lang="en" href="../">English</a><a href="https://github.com/XiuyuYang/physics-guided-character-animation">GitHub</a></nav>
+  </div></header>
+  <main>
+    <section class="hero shell" aria-labelledby="title">
+      <p class="eyebrow">PHC / Unreal Engine 5.8</p>
+      <h1 id="title">物理引导角色动画</h1>
+      <p class="lede">四个角色从同一个跑步动作起步。同样的 250 N 短时外力分别作用在小腿、肩侧和胸口，产生三种反应。第四个角色提供无外力对照。</p>
+      <figure>
+        <video controls playsinline preload="metadata" width="1280" height="720" src="../media/contact.mp4" poster="../media/contact.jpg" aria-label="Unreal Engine 局部受力对照实拍"></video>
+        <figcaption>Unreal Engine 实拍，0.71 倍速 · 250 N 持续 4 个 30 Hz 仿真步 · 青色标记提示受力位置。</figcaption>
+      </figure>
+      <dl class="lanes">
+        <div><dt>小腿</dt><dd>继续跑动</dd></div>
+        <div><dt>肩侧</dt><dd>跌倒、站起、继续奔跑</dd></div>
+        <div><dt>胸口</dt><dd>试次结束时仍然倒地</dd></div>
+        <div><dt>对照</dt><dd>未施加外力，继续奔跑</dd></div>
+      </dl>
+    </section>
+    <section class="shell detail" aria-labelledby="recovery">
+      <h2 id="recovery">起身后怎么接回跑步</h2>
+      <p>同时看两边的肩侧组。原始 PHC 片段以慢步结束。改进版按双脚支撑姿态对齐跑步相位，并在 32 帧内逐渐恢复原跑速。</p>
+      <figure>
+        <div class="video-labels"><span>原始 PHC 回放</span><span>相位对齐后的接跑</span></div>
+        <video controls playsinline preload="metadata" width="1280" height="360" src="../media/recovery.mp4" poster="../media/recovery.jpg" aria-label="原版和优化版起身接跑的同步对照"></video>
+        <figcaption>同一镜头、同一肩侧受力、同一时间轴，0.61 倍速 · 第 165 帧接回 Manny 跑步循环。</figcaption>
+      </figure>
+    </section>
+    <section class="shell detail" aria-labelledby="crowd">
+      <h2 id="crowd">一个滚石，八名跑者</h2>
+      <p>群演场景采用同样的离线流程。轻擦的角色回到跑步循环，受到严重撞击的角色保持倒地。</p>
+      <figure>
+        <video controls playsinline preload="none" width="1280" height="720" src="../media/crowd.mp4" poster="../media/crowd.jpg" aria-label="Unreal Engine 滚石与群演实拍"></video>
+        <figcaption>Unreal Engine 实拍，0.71 倍速 · 播放由 Isaac Gym / PHC 仿真生成的轨迹和角色动画。</figcaption>
+      </figure>
+    </section>
+    <section class="shell detail" aria-labelledby="run">
+      <h2 id="run">打开 Unreal 工程</h2>
+      <p>先运行安装脚本，从本机 Epic Content Examples 导入 Manny，再把仓库里的试次记录烘焙成关卡和动画。用 Unreal Engine 5.8 打开 <code>BoulderCrowd.uproject</code>，在默认的 250 N 关卡点 Play。</p>
+      <a href="https://github.com/XiuyuYang/physics-guided-character-animation/blob/main/README.zh-CN.md">在 GitHub 查看运行方法和实验说明</a>
+    </section>
+  </main>
+  <footer class="shell">基于 <a href="https://github.com/ZhengyiLuo/PHC">Perpetual Humanoid Control</a> · Unreal Engine 渲染</footer>
+</body>
+</html>

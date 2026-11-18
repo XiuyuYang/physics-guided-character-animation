@@ -1,0 +1,133 @@
+{
+  "fps": 30,
+  "down_impulse_proxy_threshold": 500.0,
+  "actors": [
+    {
+      "actor": 1,
+      "outcome": "down",
+      "contact": [
+        18,
+        19,
+        21,
+        22,
+        23,
+        24,
+        25,
+        28,
+        31
+      ],
+      "impulse_proxy": 1456.6869270267914,
+      "peak_force_proxy": 19615.45554420812,
+      "pelvis_min_m": 0.09397350251674652,
+      "first": 18,
+      "last": 31,
+      "start": 16,
+      "hold": 47,
+      "resume": null
+    },
+    {
+      "actor": 2,
+      "outcome": "graze",
+      "contact": [
+        35
+      ],
+      "impulse_proxy": 106.48030098525936,
+      "peak_force_proxy": 3194.4090295577807,
+      "pelvis_min_m": 0.8417774438858032,
+      "first": 35,
+      "last": 35,
+      "start": 33,
+      "hold": null,
+      "resume": 58
+    },
+    {
+      "actor": 3,
+      "outcome": "graze",
+      "contact": [
+        49
+      ],
+      "impulse_proxy": 138.16385652472593,
+      "peak_force_proxy": 4144.915695741778,
+      "pelvis_min_m": 0.8404624462127686,
+      "first": 49,
+      "last": 49,
+      "start": 47,
+      "hold": null,
+      "resume": 72
+    },
+    {
+      "actor": 4,
+      "outcome": "down",
+      "contact": [
+        54,
+        55,
+        57,
+        58,
+        59,
+        60,
+        61,
+        66
+      ],
+      "impulse_proxy": 1051.6388651817945,
+      "peak_force_proxy": 9077.221965329656,
+      "pelvis_min_m": 0.12467212229967117,
+      "first": 54,
+      "last": 66,
+      "start": 52,
+      "hold": 98,
+      "resume": null
+    },
+    {
+      "actor": 5,
+      "outcome": "clear",
+      "contact": [],
+      "impulse_proxy": 0.0,
+      "peak_force_proxy": 0.0,
+      "pelvis_min_m": 0.8405031561851501,
+      "first": null,
+      "last": null,
+      "start": 0,
+      "hold": null,
+      "resume": null
+    },
+    {
+      "actor": 6,
+      "outcome": "clear",
+      "contact": [],
+      "impulse_proxy": 0.0,
+      "peak_force_proxy": 0.0,
+      "pelvis_min_m": 0.8404832482337952,
+      "first": null,
+      "last": null,
+      "start": 0,
+      "hold": null,
+      "resume": null
+    },
+    {
+      "actor": 7,
+      "outcome": "clear",
+      "contact": [],
+      "impulse_proxy": 0.0,
+      "peak_force_proxy": 0.0,
+      "pelvis_min_m": 0.8419423699378967,
+      "first": null,
+      "last": null,
+      "start": 0,
+      "hold": null,
+      "resume": null
+    },
+    {
+      "actor": 8,
+      "outcome": "clear",
+      "contact": [],
+      "impulse_proxy": 0.0,
+      "peak_force_proxy": 0.0,
+      "pelvis_min_m": 0.8405677676200867,
+      "first": null,
+      "last": null,
+      "start": 0,
+      "hold": null,
+      "resume": null
+    }
+  ]
+}

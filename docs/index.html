@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Unreal Engine recordings of physically simulated running, localized impacts, and phase-matched recovery.">
+  <link rel="alternate" hreflang="zh-CN" href="zh/">
+  <link rel="icon" href="media/contact.jpg">
+  <link rel="stylesheet" href="style.css">
+  <title>Physics-Guided Character Animation</title>
+</head>
+<body>
+  <header><div class="shell header-row">
+    <a class="brand" href="./">PGC Animation</a>
+    <nav aria-label="Site"><a lang="zh-CN" href="zh/">简体中文</a><a href="https://github.com/XiuyuYang/physics-guided-character-animation">GitHub</a></nav>
+  </div></header>
+  <main>
+    <section class="hero shell" aria-labelledby="title">
+      <p class="eyebrow">PHC / Unreal Engine 5.8</p>
+      <h1 id="title">Physics-Guided Character Animation</h1>
+      <p class="lede">Four mannequins start with the same run. A 250 N force pulse at the lower leg, shoulder, or chest produces three different reactions alongside an unperturbed control.</p>
+      <figure>
+        <video controls playsinline preload="metadata" width="1280" height="720" src="media/contact.mp4" poster="media/contact.jpg" aria-label="Localized impact experiment in Unreal Engine"></video>
+        <figcaption>Unreal Engine capture at 0.71× speed · 250 N applied for four 30 Hz simulation steps · the cyan marker shows the contact point.</figcaption>
+      </figure>
+      <dl class="lanes">
+        <div><dt>Lower leg</dt><dd>Keeps running</dd></div>
+        <div><dt>Shoulder</dt><dd>Falls, stands up, resumes running</dd></div>
+        <div><dt>Chest</dt><dd>Stays down during the trial</dd></div>
+        <div><dt>Control</dt><dd>Runs without a force pulse</dd></div>
+      </dl>
+    </section>
+    <section class="shell detail" aria-labelledby="recovery">
+      <h2 id="recovery">Getting back to a run</h2>
+      <p>Watch the shoulder lane in both views. The original PHC trial ends in slow steps. The revised playback matches the stance to the run cycle and blends towards the original speed over 32 frames.</p>
+      <figure>
+        <div class="video-labels"><span>Original PHC playback</span><span>With phase-matched recovery</span></div>
+        <video controls playsinline preload="metadata" width="1280" height="360" src="media/recovery.mp4" poster="media/recovery.jpg" aria-label="Synchronized comparison of original and revised recovery"></video>
+        <figcaption>Same camera, same shoulder hit, same timeline at 0.61× speed · Manny resumes his run cycle at frame 165.</figcaption>
+      </figure>
+    </section>
+    <section class="shell detail" aria-labelledby="crowd">
+      <h2 id="crowd">Eight runners and a boulder</h2>
+      <p>A crowd scene uses the same offline workflow. Glancing contacts rejoin the run cycle, and runners with severe impacts stay down.</p>
+      <figure>
+        <video controls playsinline preload="none" width="1280" height="720" src="media/crowd.mp4" poster="media/crowd.jpg" aria-label="Boulder and runners in an Unreal Engine crowd scene"></video>
+        <figcaption>Unreal Engine capture at 0.71× speed · baked trajectories and character animation from an Isaac Gym / PHC simulation.</figcaption>
+      </figure>
+    </section>
+    <section class="shell detail" aria-labelledby="run">
+      <h2 id="run">Run the Unreal project</h2>
+      <p>Run the setup script to import Manny from your local Epic Content Examples and bake the recorded trials. Then open <code>BoulderCrowd.uproject</code> in Unreal Engine 5.8 and press Play in the default 250 N map.</p>
+      <a href="https://github.com/XiuyuYang/physics-guided-character-animation#run-in-unreal">Setup and experiment details on GitHub</a>
+    </section>
+  </main>
+  <footer class="shell">Based on <a href="https://github.com/ZhengyiLuo/PHC">Perpetual Humanoid Control</a> · Rendered in Unreal Engine</footer>
+</body>
+</html>

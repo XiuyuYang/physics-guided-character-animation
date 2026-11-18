@@ -1,0 +1,53 @@
+{
+  "frames": 180,
+  "fps": 30,
+  "level": "/Game/BoulderDemo/L_BoulderCrowd",
+  "runners": [
+    {
+      "actor": 1,
+      "outcome": "down",
+      "sections": 2,
+      "hold_frame": 47
+    },
+    {
+      "actor": 2,
+      "outcome": "graze",
+      "sections": 3,
+      "resume_frame": 58,
+      "end_quaternion_dot_error": 1.1579428016439408e-07
+    },
+    {
+      "actor": 3,
+      "outcome": "graze",
+      "sections": 3,
+      "resume_frame": 72,
+      "end_quaternion_dot_error": 1.2025336992849134e-07
+    },
+    {
+      "actor": 4,
+      "outcome": "down",
+      "sections": 2,
+      "hold_frame": 98
+    },
+    {
+      "actor": 5,
+      "outcome": "clear",
+      "sections": 1
+    },
+    {
+      "actor": 6,
+      "outcome": "clear",
+      "sections": 1
+    },
+    {
+      "actor": 7,
+      "outcome": "clear",
+      "sections": 1
+    },
+    {
+      "actor": 8,
+      "outcome": "clear",
+      "sections": 1
+    }
+  ]
+}

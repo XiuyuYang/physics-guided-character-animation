@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+Unreal/BoulderCrowd/Content/
+Unreal/BoulderCrowd/DerivedDataCache/
+Unreal/BoulderCrowd/Intermediate/
+Unreal/BoulderCrowd/Saved/
+Unreal/BoulderCrowd/.vs/

@@ -1,0 +1,12 @@
+{
+  "FileVersion": 3,
+  "EngineAssociation": "5.8",
+  "Category": "Animation",
+  "Description": "Boulder and PHC crowd animation demonstration",
+  "Plugins": [
+    { "Name": "AndroidFileServer", "Enabled": false },
+    {"Name": "PythonScriptPlugin", "Enabled": true},
+    {"Name": "EditorScriptingUtilities", "Enabled": true},
+    {"Name": "SequencerScripting", "Enabled": true}
+  ]
+}

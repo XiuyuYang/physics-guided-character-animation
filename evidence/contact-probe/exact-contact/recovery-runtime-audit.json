@@ -1,0 +1,26 @@
+[
+  {
+    "force_n": 250,
+    "role": "SHOULDER",
+    "start": 133,
+    "end": 165,
+    "seam_velocity_jump_m_s": 0.0,
+    "max_sample_bone_error_cm": 0.0036669788345998094
+  },
+  {
+    "force_n": 700,
+    "role": "CHEST",
+    "start": 106,
+    "end": 138,
+    "seam_velocity_jump_m_s": 0.0,
+    "max_sample_bone_error_cm": 0.005153804427580542
+  },
+  {
+    "force_n": 700,
+    "role": "SHOULDER",
+    "start": 118,
+    "end": 150,
+    "seam_velocity_jump_m_s": 3.662109374991118e-05,
+    "max_sample_bone_error_cm": 0.005556052015530172
+  }
+]
