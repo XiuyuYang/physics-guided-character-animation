@@ -39,6 +39,26 @@
         <figcaption>Same camera, same shoulder hit, same timeline at 0.61× speed · Manny resumes his run cycle at frame 165.</figcaption>
       </figure>
     </section>
+    <section class="shell detail" aria-labelledby="drops">
+      <h2 id="drops">Three drop sizes in a dense crowd</h2>
+      <p>Sixteen runners share the same compact formation. At one density, the 12, 45 and 100 cm spheres weigh about 0.9, 47.7 and 523.6 kg. The lightest ball clips one runner without knocking them down.</p>
+      <figure>
+        <video controls playsinline preload="none" width="1280" height="720" src="media/drops.mp4" poster="media/drops.jpg" aria-label="Three sizes of falling spheres in Unreal Engine"></video>
+        <figcaption>Cyan marks detected sphere contact. Amber marks inferred runner-to-runner transfer. Red-orange marks a terminal game state and a motionless pose.</figcaption>
+      </figure>
+      <figure>
+        <div class="video-labels"><span>Runner collisions on</span><span>Runner collisions off</span></div>
+        <video controls playsinline preload="none" width="1280" height="360" src="media/cascade.mp4" poster="media/cascade.jpg" aria-label="Matched comparison of the dense crowd with runner collisions enabled and disabled"></video>
+        <figcaption>Same 1 m sphere and initial formation. Four runners show secondary effects in the shared simulation without a detected direct sphere contact.</figcaption>
+      </figure>
+    </section>
+    <section class="shell detail" aria-labelledby="scale">
+      <h2 id="scale">100 runners in one simulation</h2>
+      <p>A 10 × 10 group, a 1 m sphere, and eight seconds of PhysX / PHC motion. Four runners complete the return to running within the clip. Nine reach the terminal game state and stay motionless.</p>
+      <figure>
+        <video controls playsinline preload="none" width="1280" height="720" src="media/scale.mp4" poster="media/scale.jpg" aria-label="One hundred runners and a falling sphere in Unreal Engine"></video>
+      </figure>
+    </section>
     <section class="shell detail" aria-labelledby="crowd">
       <h2 id="crowd">Eight runners and a boulder</h2>
       <p>Glancing contacts blend back into the run over 32 frames. Runners that reach the terminal game state stay motionless after settling.</p>

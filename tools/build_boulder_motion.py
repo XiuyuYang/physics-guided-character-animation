@@ -26,10 +26,10 @@ for side in ("l", "r"):
         ("thigh","calf"),("calf","foot"),("foot","ball"))})
 
 
-def read(folder, mode, case=None):
+def read(folder, mode, case=None, frames=180):
     with gzip.open(folder / (case or mode) / "boulder.json.gz", "rt", encoding="utf-8") as stream:
         capture = json.load(stream)
-    if capture["fps"] != 30 or len(capture["frames"]) != 180 or capture["mode"] != mode:
+    if capture["fps"] != 30 or len(capture["frames"]) != frames or capture["mode"] != mode:
         raise ValueError("Expected a complete matched boulder capture.")
     frames = capture["frames"]
     return capture, {k: np.asarray([f[k] for f in frames]) for k in

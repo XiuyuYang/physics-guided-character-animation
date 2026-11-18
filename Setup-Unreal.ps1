@@ -44,7 +44,10 @@ try {
     $env:PGCA_BUILD_PYTHON = $previousPython
 }
 
-foreach ($map in @('L_Recovery_250', 'L_Recovery_700', 'L_Contact_250', 'L_Contact_700', 'L_BoulderCrowd', 'L_Pulse', 'L_Dart')) {
+$maps = @('L_Recovery_250', 'L_Recovery_700', 'L_Contact_250', 'L_Contact_700',
+          'L_BoulderCrowd', 'L_Pulse', 'L_Dart', 'L_Drop_Palm', 'L_Drop_Medium',
+          'L_Drop_Large', 'L_Drop_Isolated', 'L_Drop_100')
+foreach ($map in $maps) {
     if (-not (Test-Path -LiteralPath (Join-Path $project "Content/BoulderDemo/$map.umap") -PathType Leaf)) {
         throw "Unreal did not generate $map."
     }

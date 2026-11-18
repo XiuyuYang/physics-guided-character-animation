@@ -268,8 +268,7 @@ def build(data=None):
         back = max(0, (right-left)*1.27-1140)*drift
         eye = (x-280, y-1140-back, 580+back*.27)
         if dense:
-            x = data["reference"][i]-min(i,90)*2.8
-            distance = 1870 if len(runners)==100 else 975
+            x,distance = data["view"][i]
             at = (x,55,40)
             eye = (x-330,distance,distance*.69)
         positions.append(eye)

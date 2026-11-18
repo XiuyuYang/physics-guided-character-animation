@@ -30,3 +30,7 @@ runpy.run_path(str(scripts / "create_contact.py"))
 convert("build_contact_motion.py", "contact-probe/exact-contact", "recovery_shots.json", "--recovery")
 runpy.run_path(str(scripts / "create_recovery.py"))
 runpy.run_path(str(scripts / "create_props.py"))
+convert("build_impact_showcase.py","impact-showcase/dense-16","impact_shots.json")
+convert("build_impact_showcase.py","impact-showcase/scale-100","impact_100_shots.json","--scale-test")
+runpy.run_path(str(scripts/"create_impact_showcase.py"),
+               init_globals={"SHOTS":("impact_shots.json","impact_100_shots.json")})

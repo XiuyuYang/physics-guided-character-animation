@@ -12,6 +12,8 @@ A running character can stumble, recover, or remain down. This project uses **Pe
 | --- | --- |
 | [Same force, different contact points](https://xiuyuyang.github.io/physics-guided-character-animation/#title) | At 250 N the lower-leg trial keeps running, the shoulder trial gets up, and the chest trial remains down through the clip. The fourth lane is a control. |
 | [Recovery before and after](https://xiuyuyang.github.io/physics-guided-character-animation/#recovery) | The same shoulder reaction in both views. The revised version blends the final steps into a phase-matched run over 32 frames (1.07 s). |
+| [Three drop sizes and a collision control](https://xiuyuyang.github.io/physics-guided-character-animation/#drops) | 12, 45 and 100 cm spheres in a 16-runner formation. Compare the 100 cm case with runner collisions on and off. |
+| [100-runner stress test](https://xiuyuyang.github.io/physics-guided-character-animation/#scale) | A 1 m sphere falls into the same-density crowd layout with 100 PHC-controlled runners. |
 | [Boulder and eight runners](https://xiuyuyang.github.io/physics-guided-character-animation/#crowd) | Glancing contacts recover into running. Runners with severe impacts stay down. |
 | [Flash pulse and stylized dart](https://xiuyuyang.github.io/physics-guided-character-animation/#projectiles) | Two game effects visualize the same point-force trials and recovery. |
 
@@ -32,9 +34,13 @@ A running character can stumble, recover, or remain down. This project uses **Pe
 | `L_Recovery_250` / `L_Recovery_700` | Matched-contact runs with the phase-aligned recovery |
 | `L_Contact_250` / `L_Contact_700` | Original PHC trials for comparison |
 | `L_BoulderCrowd` | Eight-runner crowd scene |
+| `L_Drop_Palm` / `L_Drop_Medium` / `L_Drop_Large` | 16 runners with three sphere sizes and one material density |
+| `L_Drop_Isolated` / `L_Drop_100` | Runner collisions off for the 16-runner control, and a separate 100-runner test |
 | `L_Pulse` / `L_Dart` | Two visualizations of the optimized localized contacts |
 
 The setup script imports Manny from your local Epic sample and bakes the maps, animations, and trajectories from the included trial data. New physical simulations require a separate PHC / Isaac Gym setup.
+
+In the dense scenes, the 12 cm release position was moved about 12 cm to make contact at the edge of the pack. Contact markers are inferred from force and proximity and checked against a runner-collisions-off trial. The terminal branch is a game-state rule documented with the [trial results](evidence/impact-showcase/).
 
 ## How it works
 

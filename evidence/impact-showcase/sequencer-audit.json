@@ -1,0 +1,152 @@
+{
+  "Palm": {
+    "runners": 16,
+    "frames": 180,
+    "terminal": [],
+    "recovered": [],
+    "secondary": []
+  },
+  "Medium": {
+    "runners": 16,
+    "frames": 180,
+    "terminal": [],
+    "recovered": [
+      {
+        "actor": 2,
+        "resume": 140
+      }
+    ],
+    "secondary": []
+  },
+  "Large": {
+    "runners": 16,
+    "frames": 180,
+    "terminal": [
+      {
+        "actor": 1,
+        "hold": 58
+      },
+      {
+        "actor": 2,
+        "hold": 42
+      },
+      {
+        "actor": 5,
+        "hold": 116
+      },
+      {
+        "actor": 10,
+        "hold": 73
+      }
+    ],
+    "recovered": [
+      {
+        "actor": 6,
+        "resume": 135
+      },
+      {
+        "actor": 7,
+        "resume": 116
+      },
+      {
+        "actor": 11,
+        "resume": 167
+      }
+    ],
+    "secondary": [
+      7,
+      9,
+      11,
+      13
+    ]
+  },
+  "Isolated": {
+    "runners": 16,
+    "frames": 180,
+    "terminal": [
+      {
+        "actor": 1,
+        "hold": 70
+      },
+      {
+        "actor": 2,
+        "hold": 32
+      },
+      {
+        "actor": 3,
+        "hold": 78
+      },
+      {
+        "actor": 5,
+        "hold": 74
+      },
+      {
+        "actor": 6,
+        "hold": 59
+      }
+    ],
+    "recovered": [],
+    "secondary": []
+  },
+  "100": {
+    "runners": 100,
+    "frames": 240,
+    "terminal": [
+      {
+        "actor": 4,
+        "hold": 82
+      },
+      {
+        "actor": 5,
+        "hold": 25
+      },
+      {
+        "actor": 6,
+        "hold": 71
+      },
+      {
+        "actor": 13,
+        "hold": 102
+      },
+      {
+        "actor": 15,
+        "hold": 58
+      },
+      {
+        "actor": 24,
+        "hold": 95
+      },
+      {
+        "actor": 25,
+        "hold": 65
+      },
+      {
+        "actor": 32,
+        "hold": 99
+      },
+      {
+        "actor": 33,
+        "hold": 103
+      }
+    ],
+    "recovered": [
+      {
+        "actor": 34,
+        "resume": 204
+      },
+      {
+        "actor": 41,
+        "resume": 202
+      },
+      {
+        "actor": 42,
+        "resume": 223
+      },
+      {
+        "actor": 43,
+        "resume": 227
+      }
+    ],
+    "secondary": []
+  }
+}

@@ -39,6 +39,26 @@
         <figcaption>同一镜头、同一肩侧受力、同一时间轴，0.61 倍速 · 第 165 帧接回 Manny 跑步循环。</figcaption>
       </figure>
     </section>
+    <section class="shell detail" aria-labelledby="drops">
+      <h2 id="drops">三种尺寸的落石，16 人密集队列</h2>
+      <p>球体密度相同。直径 12、45、100 厘米时，质量分别约为 0.9、47.7、523.6 千克。最小的球擦到一名跑者，对方没有倒下。</p>
+      <figure>
+        <video controls playsinline preload="none" width="1280" height="720" src="../media/drops.mp4" poster="../media/drops.jpg" aria-label="Unreal Engine 中三种球体尺寸的落石实拍"></video>
+        <figcaption>青色表示检测到球体直接接触，琥珀色表示推断的人物间连锁影响，橙红色表示倒地后静止的终止状态。</figcaption>
+      </figure>
+      <figure>
+        <div class="video-labels"><span>开启人物间碰撞</span><span>关闭人物间碰撞</span></div>
+        <video controls playsinline preload="none" width="1280" height="360" src="../media/cascade.mp4" poster="../media/cascade.jpg" aria-label="16 人开启与关闭人物间碰撞的同步对照"></video>
+        <figcaption>两边使用同一个 1 米球和相同初始队列。左侧有四名跑者未检测到球体直接接触，却受到附近跑者的影响。</figcaption>
+      </figure>
+    </section>
+    <section class="shell detail" aria-labelledby="scale">
+      <h2 id="scale">100 人同场测试</h2>
+      <p>10 × 10 队列与 1 米球同场，由 PhysX / PHC 计算 8 秒动作。四名角色在片段内完成接跑，九名进入游戏终止状态，倒地后保持静止。</p>
+      <figure>
+        <video controls playsinline preload="none" width="1280" height="720" src="../media/scale.mp4" poster="../media/scale.jpg" aria-label="Unreal Engine 中 100 人和 1 米落石的同场测试"></video>
+      </figure>
+    </section>
     <section class="shell detail" aria-labelledby="crowd">
       <h2 id="crowd">一个滚石，八名跑者</h2>
       <p>轻擦的角色用 32 帧接回跑步循环。达到游戏终止条件的角色在倒地稳定后保持静止。</p>
